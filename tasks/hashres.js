@@ -1,6 +1,7 @@
 /*
  * grunt-hashres
- * https://github.com/luismahou/grunt-hashres
+ * https://github.com/james3432/grunt-hashres
+ * forked from https://github.com/luismahou/grunt-hashres
  *
  * Copyright (c) 2013 luismahou
  * Licensed under the MIT license.
@@ -12,7 +13,7 @@ module.exports = function(grunt) {
 
   var helper = require('./hashresHelper');
 
-  grunt.registerMultiTask('hashres', 'Your task description goes here.', function() {
+  grunt.registerMultiTask('hashres', 'Rev hash static files and update all references to them', function() {
 
     // Merging options with defaults
     var options = this.options({
