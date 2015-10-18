@@ -1,6 +1,7 @@
 /*
  * grunt-hashres
- * https://github.com/luismahou/grunt-hashres
+ * https://github.com/james3432/grunt-hashres
+ * forked from https://github.com/luismahou/grunt-hashres
  *
  * Copyright (c) 2013 Luismahou
  * Licensed under the MIT license.
@@ -36,7 +37,11 @@ exports.hashAndSub = function(grunt, options) {
     options.files.forEach(function(f) {
       f.src.forEach(function(src) {
         var md5        = utils.md5(src).slice(0, 8),
-            fileName   = path.basename(src),
+            // The / is appended here so that replacements for existing cached files don't alias. 
+            // eg. cached.1234.test.js musn't see the substitution 
+            //        [1234.test.js -> cached.1234.test.js]
+            // because then we'd get cached.cached.1234.test.js 
+            fileName   = '/' + path.basename(src),
             lastIndex  = fileName.lastIndexOf('.'),
             renamed    = formatter({
               hash: md5,
@@ -55,7 +60,9 @@ exports.hashAndSub = function(grunt, options) {
 
         // Renaming the file
         if (renameFiles) {
-          fs.renameSync(src, path.resolve(path.dirname(src), renamed));
+          // make a copy instead
+          // fs.renameSync(src, path.resolve(path.dirname(src), renamed));
+          fs.createReadStream(src).pipe(fs.createWriteStream(path.resolve(path.dirname(src), renamed.replace(/\//,''))));
         }
         grunt.log.write(src + ' ').ok(renamed);
       });
@@ -70,7 +77,6 @@ exports.hashAndSub = function(grunt, options) {
       files.sort(function(a, b) {
         return b[0].length - a[0].length;
       });
-
 
 
       // Substituting references to the given files with the hashed ones.
