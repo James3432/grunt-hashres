@@ -1,8 +1,9 @@
 /*
  * grunt-hashres
- * https://github.com/luismahou/grunt-hashres
+ * https://github.com/james3432/grunt-hashres
+ * forked from https://github.com/luismahou/grunt-hashres
  *
- * Copyright (c) 2013 Luismahou
+ * Original Copyright (c) 2013 Luismahou
  * Licensed under the MIT license.
  */
 
@@ -38,8 +39,10 @@ function escapeNonRegex(input) {
 exports.compileFormat = function(format) {
   return function(options) {
     var output = format.replace(/\$\{hash\}/g, options.hash);
-    output = output.replace(/\$\{name\}/g, options.name);
+    // make it ignore existing cached files, and strip any / from the filename
+    output = output.replace(/\$\{name\}/g, options.name.replace(/cached\.[a-zA-Z0-9]{8}\./,'').replace(/\//,''));
     output = output.replace(/\$\{ext\}/g, options.ext);
+    output = '/' + output;
     return output;
   };
 };
@@ -50,8 +53,10 @@ exports.compileSearchFormat = function(format) {
   format = preg_quote(format);
   return function(options) {
     var output = format.split('\\$\\{hash\\}').join(escapeNonRegex(options.hash));
-    output = output.split('\\$\\{name\\}').join(escapeNonRegex(options.name));
+    // strip / from filename
+    output = output.split('\\$\\{name\\}').join(escapeNonRegex(options.name.replace(/\//,'')));
     output = output.split('\\$\\{ext\\}').join(escapeNonRegex(options.ext));
+    output = '/' + output;
     return output;
   };
 };
