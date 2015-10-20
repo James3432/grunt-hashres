@@ -9,7 +9,7 @@
 
 'use strict';
 
-var fs    = require('fs'),
+var fs    = require('fs-extra'),
     path  = require('path'),
     utils = require('./hashresUtils');
 
@@ -62,7 +62,8 @@ exports.hashAndSub = function(grunt, options) {
         if (renameFiles) {
           // make a copy instead
           // fs.renameSync(src, path.resolve(path.dirname(src), renamed));
-          fs.createReadStream(src).pipe(fs.createWriteStream(path.resolve(path.dirname(src), renamed.replace(/\//,''))));
+           var dst = path.resolve(path.dirname(src), renamed.replace(/\//,''));
+          fs.copySync(src, dst, {clobber:true});
         }
         grunt.log.write(src + ' ').ok(renamed);
       });
